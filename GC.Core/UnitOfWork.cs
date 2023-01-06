@@ -17,7 +17,7 @@ namespace GC.Core
 
         #region Repositories
         public IProyectosRepository ProyectosRepository { get; }
-
+        public IUsuariosRepository UsuariosRepository { get; }
 
         #endregion
         public UnitOfWork()
@@ -34,6 +34,7 @@ namespace GC.Core
             #region Repositorios
 
             ProyectosRepository = new ProyectosRepository(_connection, _transaction);
+            UsuariosRepository = new UsuariosRepository(_connection, _transaction);
 
             #endregion
         }

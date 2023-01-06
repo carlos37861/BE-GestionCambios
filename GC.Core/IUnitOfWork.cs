@@ -11,6 +11,7 @@ namespace GC.Core
     {
         //Agregar Interface de reposistorios ejemplo:
         IProyectosRepository ProyectosRepository { get; }
+        IUsuariosRepository UsuariosRepository { get; }
 
         void Commit();
         void Rollback();

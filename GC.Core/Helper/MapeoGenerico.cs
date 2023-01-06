@@ -16,7 +16,10 @@ namespace GC.Core.Helper
             #region "GDTBC_PROYECTOS"            
             CreateMap<GDTBC_PROYECTOS, GDTBC_PROYECTOS_DTO>();
             CreateMap<GDTBC_PROYECTOS_DTO, GDTBC_PROYECTOS>();
-
+            #endregion
+            #region "GDTBC_PROYECTOS"            
+            CreateMap<GDTBC_USUARIOS, GDTBC_USUARIOS_DTO>();
+            CreateMap<GDTBC_USUARIOS_DTO, GDTBC_USUARIOS>();
             #endregion
         }
     }

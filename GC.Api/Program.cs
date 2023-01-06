@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 //INYECCION DE DEPENDENCIA
 builder.Services.AddTransient<IProyectosService, ProyectosService>();
+builder.Services.AddTransient<IUsuariosService, UsuariosService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
