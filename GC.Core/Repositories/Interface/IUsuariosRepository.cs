@@ -9,7 +9,7 @@ namespace GC.Core.Repositories.Interface
 {
     public interface IUsuariosRepository
     {
-        Task<ResponseModel> Listar(string V_IDPROYECTOS);
+        Task<ResponseModel> Login(string V_USERNAME,string PASSWORD);
         Task<ResponseModel> Insertar(GDTBC_USUARIOS ent,string password);
         Task<ResponseModel> Update(GDTBC_USUARIOS ent);
         Task<ResponseModel> Delete(string V_IDPROYECTOS);

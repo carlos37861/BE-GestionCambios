@@ -52,7 +52,7 @@ namespace GC.Core.Services.Implementation
             return responseModel;
         }
 
-        public Task<ResponseModel> Listar(string V_IDPROYECTOS)
+        public Task<ResponseModel> Login(string V_USERNAME, string PASSWORD)
         {
             throw new NotImplementedException();
         }

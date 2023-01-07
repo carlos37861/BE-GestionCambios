@@ -1,4 +1,5 @@
-﻿using GC.Core.Clases.ENTITIES;
+﻿using Common.Core.Services;
+using GC.Core.Clases.ENTITIES;
 using GC.Core.Repositories.Conexion;
 using GC.Core.Repositories.Interface;
 using System;
@@ -55,26 +56,27 @@ namespace GC.Core.Repositories.Implementation
             }
         }
 
-        public Task<ResponseModel> Listar(string V_IDPROYECTOS)
+        public async Task<ResponseModel> Login(string V_USERNAME, string PASSWORD)
         {
-            //ResponseModel response = new ResponseModel();
-            //using (var command = CreateCommand())
-            //{
-            //    //command.CommandText = "[SIG].[SIG_LST_GDTBC_ARBOLMANT]";
-            //    //command.CommandType = CommandType.StoredProcedure;
-            //    //SqlParameter sp;
-            //    //sp = command.Parameters.Add("@V_IDREPOSITORIOVISTA", SqlDbType.VarChar);
-            //    //sp.Value = V_IDREPOSITORIOVISTA;
-            //    //sp = command.Parameters.Add("@N_IDMODULO", SqlDbType.Int);
-            //    //sp.Value = N_IDMODULO;
-            //    //using (var reader = await command.ExecuteReaderAsync())
-            //    //{
-            //    //    response.success = true;
-            //    //    response.result = ReflectionService.ReaderToList<GDTBC_ARBOLMANT>(reader);
-            //    //}
-            //    //return response;
-            //}
-            throw new NotImplementedException();
+            //var user=
+            ResponseModel response = new ResponseModel();
+            using (var command = CreateCommand())
+            {
+                command.CommandText = "[SIG].[SIG_LST_GDTBC_USUARIO]";
+                command.CommandType = CommandType.StoredProcedure;
+                SqlParameter sp;
+                sp = command.Parameters.Add("@V_USERNAME", SqlDbType.VarChar);
+                sp.Value = V_USERNAME;
+                sp = command.Parameters.Add("@PASSWORD", SqlDbType.Int);
+                sp.Value = PASSWORD;
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    response.success = true;
+                    response.result = ReflectionService.ReaderToList<GDTBC_USUARIOS>(reader);
+                }
+                return response;
+            }
+           
         }
 
         public Task<ResponseModel> Update(GDTBC_USUARIOS ent)
@@ -88,6 +90,22 @@ namespace GC.Core.Repositories.Implementation
             {
                 passwordHash = hmac.Key;
                 passwordSalt = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
+        }
+
+        public bool VerificarPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using(var hmac=new System.Security.Cryptography.HMACSHA512(passwordSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                for (int i = 0; i < computedHash.Length; i++)
+                {
+                    if (computedHash[i] != passwordHash[i])
+                    {
+                        return false;
+                    }
+                }
+                return true;
             }
         }
     }
