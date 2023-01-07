@@ -2,11 +2,15 @@
 using GC.Core.Clases.ENTITIES;
 using GC.Core.Repositories.Conexion;
 using GC.Core.Repositories.Interface;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,11 +18,14 @@ namespace GC.Core.Repositories.Implementation
 {
     public class UsuariosRepository: Repository, IUsuariosRepository
     {
-        public UsuariosRepository(SqlConnection context, SqlTransaction transaction)
-    {
-        _context = context;
-        _transaction = transaction;
-    }
+        private readonly IConfiguration _configuration;
+
+        public UsuariosRepository(SqlConnection context, SqlTransaction transaction,IConfiguration configuration)
+        {
+            _context = context;
+            _transaction = transaction;
+            _configuration = configuration;
+        }
 
         public Task<ResponseModel> Delete(string V_IDPROYECTOS)
         {
@@ -33,7 +40,7 @@ namespace GC.Core.Repositories.Implementation
             ent.V_PASSWORDSALT = passwordSalt;
             using (var command = CreateCommand())
             {
-                command.CommandText = "[GC].[TZ_INS_USUARIO]";
+                command.CommandText = "[GC].[GC_INS_USUARIO]";
                 command.CommandType = CommandType.StoredProcedure;
                 SqlParameter sp;
                 sp = command.Parameters.Add("@V_USERNAME", SqlDbType.VarChar);
@@ -58,21 +65,32 @@ namespace GC.Core.Repositories.Implementation
 
         public async Task<ResponseModel> Login(string V_USERNAME, string PASSWORD)
         {
-            //var user=
+            GDTBC_USUARIOS user = new GDTBC_USUARIOS();
             ResponseModel response = new ResponseModel();
             using (var command = CreateCommand())
             {
-                command.CommandText = "[SIG].[SIG_LST_GDTBC_USUARIO]";
+                command.CommandText = "[GC].[GC_LST_USUARIO]";
                 command.CommandType = CommandType.StoredProcedure;
                 SqlParameter sp;
                 sp = command.Parameters.Add("@V_USERNAME", SqlDbType.VarChar);
                 sp.Value = V_USERNAME;
-                sp = command.Parameters.Add("@PASSWORD", SqlDbType.Int);
-                sp.Value = PASSWORD;
                 using (var reader = await command.ExecuteReaderAsync())
                 {
-                    response.success = true;
-                    response.result = ReflectionService.ReaderToList<GDTBC_USUARIOS>(reader);
+
+                    user = ReflectionService.ReaderToEntity<GDTBC_USUARIOS>(reader);
+                    if(user != null)
+                    {
+                        if (!VerificarPasswordHash(PASSWORD, user.V_PASSWORDHASH, user.V_PASSWORDSALT))
+                        {
+                            response.success = false;
+                        }
+                        else
+                        {
+                            response.success = true;
+                            response.result = CrearToken(user);
+                            
+                        }
+                    }             
                 }
                 return response;
             }
@@ -88,8 +106,8 @@ namespace GC.Core.Repositories.Implementation
         {
             using (var hmac= new System.Security.Cryptography.HMACSHA512())
             {
-                passwordHash = hmac.Key;
-                passwordSalt = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
         }
 
@@ -107,6 +125,27 @@ namespace GC.Core.Repositories.Implementation
                 }
                 return true;
             }
+        }
+
+        private string CrearToken(GDTBC_USUARIOS user)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier,user.V_IDUSER.ToString()),
+                new Claim(ClaimTypes.Name,user.V_USERNAME)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Pl@t1n1umcarlosPl@t1n1umcarlosPl@t1n1umcarlosPl@t1n1umcarlosPl@t1n1umcarlosPl@t1n1umcarlosPl@t1n1umcarlosPl@t1n1umcarlosPl@t1n1umcarlosPl@t1n1umcarlosPl@t1n1umcarlosPl@t1n1umcarlosPl@t1n1umcarlosPl@t1n1umcarlos"));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(claims),
+                    Expires = System.DateTime.Now.AddDays(1),
+                    SigningCredentials = creds
+                };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
     }
 }

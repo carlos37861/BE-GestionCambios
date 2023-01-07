@@ -1,5 +1,6 @@
 ﻿using GC.Core.Clases.ENTITIES;
 using GC.Core.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace GC.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProyectosController : ControllerBase
     {
         IProyectosService _services;

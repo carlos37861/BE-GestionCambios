@@ -31,5 +31,22 @@ namespace GC.Api.Controllers
                 return BadRequest(response);
             }
         }
+
+        [HttpPost]
+        [Route("Login")]
+        public async Task<ActionResult> Login(GDTBC_USUARIOS_DTO dto)
+        {
+            ResponseModel response = await _services.Login(dto.V_USERNAME, dto.V_PASSWORD);
+            if (response.success)
+            {
+                response.successMessage = "Usuario y password correcto";
+                return Ok(response);
+            }
+            else
+            {
+                response.errorMessage = "Usuario o contraseña erronea";
+                return BadRequest(response);
+            }
+        }
     }
 }

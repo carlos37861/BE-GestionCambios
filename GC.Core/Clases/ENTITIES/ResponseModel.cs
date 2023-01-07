@@ -14,5 +14,7 @@ namespace GC.Core.Clases.ENTITIES
         public string errorMessage { get; set; }
         public bool RepeatOption { get; set; }
         public string MethodToRepeat { get; set; }
+        public string successMessage { get; set; }
+
     }
 }

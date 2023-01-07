@@ -52,9 +52,28 @@ namespace GC.Core.Services.Implementation
             return responseModel;
         }
 
-        public Task<ResponseModel> Login(string V_USERNAME, string PASSWORD)
+        public async Task<ResponseModel> Login(string V_USERNAME, string PASSWORD)
         {
-            throw new NotImplementedException();
+            ResponseModel responseModel = new ResponseModel();
+            try
+            {
+                responseModel = await uow.UsuariosRepository.Login(V_USERNAME, PASSWORD);
+                if (responseModel.success)
+                {
+                    uow.Commit();
+                }
+                else
+                {
+                    uow.Rollback();
+                }
+            }
+            catch (Exception ex)
+            {
+                responseModel.success = false;
+                responseModel.errorMessage = ex.Message;
+                uow.Rollback();
+            }
+            return responseModel;
         }
 
         public Task<ResponseModel> Update(GDTBC_USUARIOS_DTO ent)
