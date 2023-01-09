@@ -26,8 +26,8 @@ namespace GC.Core
         {
             #region Conexion            
             //_connection = new SqlConnection("Data Source=172.16.0.216\\SISTEMAS; Initial Catalog=BDGESDOC;Persist Security Info = True; User ID=usrSIG ; Password=3YpFULAhzYyb2swq2HBc;");
-            _connection = new SqlConnection("Data Source=LMSIS07\\SQLEXPRESS; Initial Catalog=BDGESTORCAMBIOS;Persist Security Info = True; User ID=sa ; Password=123;");
-            //_connection = new SqlConnection("Data Source=DESKTOP-Q7699NO\\SQLEXPRESS; Initial Catalog=BDGESTORCAMBIOS;Persist Security Info = True; User ID=sa ; Password=123;");
+            //_connection = new SqlConnection("Data Source=LMSIS07\\SQLEXPRESS; Initial Catalog=BDGESTORCAMBIOS;Persist Security Info = True; User ID=sa ; Password=123;");
+            _connection = new SqlConnection("Data Source=DESKTOP-Q7699NO\\SQLEXPRESS; Initial Catalog=BDGESTORCAMBIOS;Persist Security Info = True; User ID=sa ; Password=123;");
 
             _connection.Open();
             _transaction = _connection.BeginTransaction();

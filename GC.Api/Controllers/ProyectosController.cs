@@ -1,5 +1,6 @@
 ﻿using GC.Core.Clases.ENTITIES;
 using GC.Core.Services.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,6 @@ namespace GC.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class ProyectosController : ControllerBase
     {
         IProyectosService _services;
@@ -19,6 +19,8 @@ namespace GC.Api.Controllers
         }
 
         [HttpGet]
+        //[Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
+
         [Route("Listar-proyectos")]
         public async Task<ActionResult> Listar(string V_IDPROYECTOS)
         {

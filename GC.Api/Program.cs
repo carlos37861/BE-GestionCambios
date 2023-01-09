@@ -59,7 +59,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
- 
+
+app.UseCors("corsapp");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
