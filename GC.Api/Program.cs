@@ -1,6 +1,7 @@
 using GC.Core.Services.Implementation;
 using GC.Core.Services.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
@@ -44,6 +45,11 @@ builder.Services.AddSwaggerGen(c =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//CÓDIGO PARA QUE LA PRIMERA LETRA DE LOS JSON NO LLEGUE EN MINUSCULA
+builder.Services.AddControllers()
+            .AddJsonOptions(JsonOptions =>
+                            JsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null);
 
 //services cors
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
