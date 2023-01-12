@@ -17,6 +17,6 @@ namespace GC.Core.Clases.DTO
         public DateTime D_FECREGISTRO { get; set; }
         public string V_USUREGISTRO { get; set; }
         public DateTime D_FECMODIFICA { get; set; }
-        public DateTime V_USUMODIFICA { get; set; }
+        public string V_USUMODIFICA { get; set; }
     }
 }

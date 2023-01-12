@@ -29,9 +29,28 @@ namespace GC.Core.Services.Implementation
             throw new NotImplementedException();
         }
 
-        public Task<ResponseModel> Insertar(GDTBC_PROYECTOS_DTO dto)
+        public async Task<ResponseModel> Insertar(GDTBC_PROYECTOS_DTO dto)
         {
-            throw new NotImplementedException();
+            ResponseModel responseModel = new ResponseModel();
+            try
+            {
+                responseModel = await uow.ProyectosRepository.Insertar(mapper.Map<GDTBC_PROYECTOS>(dto));
+                if (responseModel.success)
+                {
+                    uow.Commit();
+                }
+                else
+                {
+                    uow.Rollback();
+                }
+            }
+            catch (Exception ex)
+            {
+                responseModel.success = false;
+                responseModel.errorMessage = ex.Message;
+                uow.Rollback();
+            }
+            return responseModel;
         }
 
         public async Task<ResponseModel> Listar(string V_IDPROYECTOS)

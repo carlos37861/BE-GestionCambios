@@ -1,4 +1,5 @@
-﻿using GC.Core.Clases.ENTITIES;
+﻿using GC.Core.Clases.DTO;
+using GC.Core.Clases.ENTITIES;
 using GC.Core.Services.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -25,6 +26,22 @@ namespace GC.Api.Controllers
         public async Task<ActionResult> Listar(string V_IDPROYECTOS)
         {
             ResponseModel response = await _services.Listar(V_IDPROYECTOS);
+            if (response.success)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(response);
+            }
+        }
+
+        [HttpPost]
+        [Route("Insert-proyectos")]
+        public async Task<ActionResult> Insert(GDTBC_PROYECTOS_DTO dto)
+        {
+
+            ResponseModel response = await _services.Insertar(dto);
             if (response.success)
             {
                 return Ok(response);

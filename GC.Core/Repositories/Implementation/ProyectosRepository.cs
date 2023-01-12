@@ -24,9 +24,35 @@ namespace GC.Core.Repositories.Implementation
             throw new NotImplementedException();
         }
 
-        public Task<ResponseModel> Insertar(GDTBC_PROYECTOS ent)
+        public async Task<ResponseModel> Insertar(GDTBC_PROYECTOS ent)
         {
-            throw new NotImplementedException();
+            ResponseModel response = new ResponseModel();
+            using (var command = CreateCommand())
+            {
+                command.CommandText = "[GC].[GC_INSERT_GDTBC_PROYECTOS]";
+                command.CommandType = CommandType.StoredProcedure;
+                SqlParameter sp;
+                sp = command.Parameters.Add("@V_NOMBREPROYECTO", SqlDbType.VarChar);
+                sp.Value = ent.V_NOMBREPROYECTO;
+                sp = command.Parameters.Add("@V_DESCRIPPROYECTO", SqlDbType.VarChar);
+                sp.Value = ent.V_DESCRIPPROYECTO;
+                sp = command.Parameters.Add("@V_VERSION", SqlDbType.VarChar);
+                sp.Value = ent.V_VERSION;
+                sp = command.Parameters.Add("@V_USUREGISTRO", SqlDbType.VarChar);
+                sp.Value = ent.V_USUREGISTRO;
+
+                sp = command.Parameters.Add("@V_IDPROYECTOS", SqlDbType.VarChar);
+                sp.Value = ent.V_IDPROYECTOS;
+                sp.Direction = ParameterDirection.Output;
+                sp.Size = 5;
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    response.success = true;
+                    ent.V_IDPROYECTOS = command.Parameters["@V_IDPROYECTOS"].Value.ToString();
+                    response.result = ent;
+                }
+                return response;
+            }
         }
 
         public async Task<ResponseModel> Listar(string V_IDPROYECTOS)
